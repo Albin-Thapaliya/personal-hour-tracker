@@ -7,5 +7,9 @@
   },
   "author": "Albin Thapaliya",
   "license": "ISC",
-  "description": "personal-hour-tracker"
+  "description": "personal-hour-tracker",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.19.2"
+  }
 }
