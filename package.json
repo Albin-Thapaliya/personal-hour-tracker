@@ -1,0 +1,11 @@
+{
+  "name": "personal-hour-tracker",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Albin Thapaliya",
+  "license": "ISC",
+  "description": "personal-hour-tracker"
+}
