@@ -4,12 +4,11 @@ function Countdown({ targetDate }) {
     const [timeLeft, setTimeLeft] = useState('');
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
+        const updateCountdown = () => {
             const now = new Date().getTime();
             const distance = targetDate - now;
 
             if (distance < 0) {
-                clearInterval(intervalId);
                 setTimeLeft("EXPIRED");
                 return;
             }
@@ -20,13 +19,14 @@ function Countdown({ targetDate }) {
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
             setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`);
-        }, 1000);
+        };
 
+        const intervalId = setInterval(updateCountdown, 1000);
         return () => clearInterval(intervalId);
     }, [targetDate]);
 
     return (
-        <div id="demo">
+        <div id="countdown">
             {timeLeft}
         </div>
     );
