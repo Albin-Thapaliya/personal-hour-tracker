@@ -1,17 +1,23 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchStats, fetchItems } from './apiService';
-import UserStats from './UserStats';
-import ShopMenu from './ShopMenu';
-import Countdown from './Countdown';
-import Transactions from './Transactions';
-import LoadingSpinner from './LoadingSpinner';
-import ErrorBoundary from './ErrorBoundary';
+import React, { useEffect, useContext, useState } from 'react';
+import { fetchStats, fetchItems } from './services/apiService';
+import UserStats from './components/UserStats';
+import ShopMenu from './components/ShopMenu';
+import Countdown from './components/Countdown';
+import Transactions from './components/Transactions';
+import Auth from './components/Auth';
+import AdminPanel from './components/AdminPanel';
+import LoadingSpinner from './components/LoadingSpinner';
+import ErrorBoundary from './components/ErrorBoundary';
+import { AuthContext, AuthProvider } from './context/AuthContext';
 
 function App() {
-    const dispatch = useDispatch();
-    const { tickets, hours, ticketsSpent, ticketsPending } = useSelector(state => state.user);
-    const { items, transactions } = useSelector(state => state.shop);
+    const { user } = useContext(AuthContext);
+    const [tickets, setTickets] = useState(0);
+    const [hours, setHours] = useState(0);
+    const [ticketsSpent, setTicketsSpent] = useState(0);
+    const [ticketsPending, setTicketsPending] = useState(0);
+    const [shopItems, setShopItems] = useState([]);
+    const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const countDownDate = new Date("Aug 31, 2024 16:00:00").getTime();
@@ -20,10 +26,13 @@ function App() {
         const getData = async () => {
             try {
                 const stats = await fetchStats();
-                dispatch({ type: 'SET_USER', payload: stats });
+                setTickets(stats.availableTickets);
+                setHours(stats.hoursWorked);
+                setTicketsSpent(stats.spentTickets);
+                setTicketsPending(stats.pendingTickets);
 
                 const items = await fetchItems();
-                dispatch({ type: 'SET_ITEMS', payload: items });
+                setShopItems(items);
 
                 setLoading(false);
             } catch (error) {
@@ -32,12 +41,13 @@ function App() {
         };
 
         getData();
-    }, [dispatch]);
+    }, []);
 
     const handlePurchase = (item) => {
         if (tickets >= item.ticketCost) {
-            dispatch({ type: 'UPDATE_TICKETS', payload: -item.ticketCost });
-            dispatch({ type: 'ADD_TRANSACTION', payload: { type: 'Spent', amount: item.ticketCost, item: item.name } });
+            setTickets(tickets - item.ticketCost);
+            setTicketsSpent(ticketsSpent + item.ticketCost);
+            setTransactions([...transactions, { type: 'Spent', amount: item.ticketCost, item: item.name }]);
         } else {
             alert('Not enough tickets');
         }
@@ -51,9 +61,8 @@ function App() {
         <ErrorBoundary>
             <div className="App">
                 <h1>Hour Tracker and Shop</h1>
-                <Countdown targetDate={countDownDate} />
-                <UserStats tickets={tickets} hours={hours} ticketsSpent={ticketsSpent} ticketsPending={ticketsPending} />
-                <ShopMenu items={items} onPurchase={handlePurchase} />
-                <Transactions transactions={transactions} />
-            </div>
-        </ErrorBoundary>
+                {user ? (
+                    <>
+                        <Countdown targetDate={countDownDate} />
+                        <UserStats tickets={tickets} hours={hours} ticketsSpent={ticketsSpent} ticketsPending={ticketsPending} />
+                        <ShopMenu items={shopItems
