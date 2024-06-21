@@ -3,6 +3,7 @@ import axios from 'axios';
 import UserStats from './UserStats';
 import ShopMenu from './ShopMenu';
 import Countdown from './Countdown';
+
 function App() {
     const [tickets, setTickets] = useState(0);
     const [hours, setHours] = useState(0);
@@ -57,11 +58,21 @@ function App() {
         setTickets(tickets - 1);
     };
 
+    const calculateHoursPerDay = () => {
+        const targetTickets = 400;
+        const ticketsNeeded = targetTickets - tickets;
+        const currentDate = new Date().getTime();
+        const daysRemaining = Math.ceil((countDownDate - currentDate) / (1000 * 60 * 60 * 24));
+        return ticketsNeeded / daysRemaining;
+    };
+
+    const hoursPerDay = calculateHoursPerDay();
+
     return (
         <div className="App">
             <h1>Hour Tracker and Shop</h1>
             <Countdown targetDate={countDownDate} />
-            <UserStats tickets={tickets} hours={hours} ticketsSpent={ticketsSpent} ticketsPending={ticketsPending} />
+            <UserStats tickets={tickets} hours={hours} ticketsSpent={ticketsSpent} ticketsPending={ticketsPending} hoursPerDay={hoursPerDay} />
             <ShopMenu items={shopItems} onPurchase={handlePurchase} />
             <div>
                 <button onClick={increaseTickets}>Increase Tickets</button>
