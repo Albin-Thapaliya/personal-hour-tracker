@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { fetchItems, addItem, deleteItem } from './apiService';
+import React, { useState, useEffect, useContext } from 'react';
+import { fetchItems, addItem, deleteItem } from '../services/apiService';
+import { AuthContext } from '../context/AuthContext';
 
 function AdminPanel() {
+    const { user } = useContext(AuthContext);
     const [items, setItems] = useState([]);
     const [itemName, setItemName] = useState('');
     const [itemCost, setItemCost] = useState(0);
@@ -34,6 +36,10 @@ function AdminPanel() {
             console.error('Failed to delete item', error);
         }
     };
+
+    if (!user || !user.isAdmin) {
+        return <div>Access denied</div>;
+    }
 
     return (
         <div>
