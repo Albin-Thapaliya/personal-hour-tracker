@@ -8,6 +8,7 @@ import Auth from './components/Auth';
 import AdminPanel from './components/AdminPanel';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
+import Notification from './components/Notification';
 import { AuthContext, AuthProvider } from './context/AuthContext';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
     const [shopItems, setShopItems] = useState([]);
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [notification, setNotification] = useState({ message: '', type: '' });
 
     const countDownDate = new Date("Aug 31, 2024 16:00:00").getTime();
 
@@ -37,6 +39,8 @@ function App() {
                 setLoading(false);
             } catch (error) {
                 console.error('Failed to fetch data', error);
+                setNotification({ message: 'Failed to fetch data', type: 'error' });
+                setLoading(false);
             }
         };
 
@@ -48,8 +52,9 @@ function App() {
             setTickets(tickets - item.ticketCost);
             setTicketsSpent(ticketsSpent + item.ticketCost);
             setTransactions([...transactions, { type: 'Spent', amount: item.ticketCost, item: item.name }]);
+            setNotification({ message: 'Purchase successful', type: 'success' });
         } else {
-            alert('Not enough tickets');
+            setNotification({ message: 'Not enough tickets', type: 'error' });
         }
     };
 
@@ -61,8 +66,26 @@ function App() {
         <ErrorBoundary>
             <div className="App">
                 <h1>Hour Tracker and Shop</h1>
+                {notification.message && <Notification message={notification.message} type={notification.type} />}
                 {user ? (
                     <>
                         <Countdown targetDate={countDownDate} />
-                        <UserStats tickets={tickets} hours={hours} ticketsSpent={ticketsSpent} ticketsPending={ticketsPending} />
-                        <ShopMenu items={shopItems
+                        <UserStats
+                            tickets={tickets}
+                            hours={hours}
+                            ticketsSpent={ticketsSpent}
+                            ticketsPending={ticketsPending}
+                        />
+                        <ShopMenu items={shopItems} onPurchase={handlePurchase} />
+                        <Transactions transactions={transactions} />
+                        {user.isAdmin && <AdminPanel />}
+                    </>
+                ) : (
+                    <Auth />
+                )}
+            </div>
+        </ErrorBoundary>
+    );
+}
+
+export default App;
