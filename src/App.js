@@ -9,7 +9,7 @@ import AdminPanel from './components/AdminPanel';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
 import Notification from './components/Notification';
-import { AuthContext, AuthProvider } from './context/AuthContext';
+import { AuthContext } from './context/AuthContext';
 
 function App() {
     const { user } = useContext(AuthContext);
@@ -35,11 +35,10 @@ function App() {
 
                 const items = await fetchItems();
                 setShopItems(items);
-
-                setLoading(false);
             } catch (error) {
                 console.error('Failed to fetch data', error);
                 setNotification({ message: 'Failed to fetch data', type: 'error' });
+            } finally {
                 setLoading(false);
             }
         };
