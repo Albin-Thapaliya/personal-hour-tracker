@@ -1,15 +1,15 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { fetchStats, fetchItems } from './services/apiService';
-import UserStats from './components/UserStats';
-import ShopMenu from './components/ShopMenu';
-import Countdown from './components/Countdown';
-import Transactions from './components/Transactions';
-import Auth from './components/Auth';
-import AdminPanel from './components/AdminPanel';
-import LoadingSpinner from './components/LoadingSpinner';
-import ErrorBoundary from './components/ErrorBoundary';
-import Notification from './components/Notification';
-import { AuthContext } from './context/AuthContext';
+import { fetchStats, fetchItems } from 'apiService';
+import UserStats from 'UserStats';
+import ShopMenu from 'ShopMenu';
+import Countdown from 'Countdown';
+import Transactions from 'Transactions';
+import Auth from 'Auth';
+import AdminPanel from '.AdminPanel';
+import LoadingSpinner from 'LoadingSpinner';
+import ErrorBoundary from 'ErrorBoundary';
+import Notification from 'Notification';
+import { AuthContext } from 'AuthContext';
 
 function App() {
     const { user } = useContext(AuthContext);
