@@ -17,7 +17,7 @@ class ErrorBoundary extends Component {
     }
 
     logErrorToService = (error, info) => {
-        logError(error, info);
+        console.error(error, info);
         console.log("Logged to error service:", error, info);
     };
 
