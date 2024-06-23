@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { fetchItems, addItem, deleteItem } from 'apiService.js';
-import { AuthContext } from 'AuthContext.js';
+import { fetchItems, addItem, deleteItem } from './apiService.js';
+import { AuthContext } from './AuthContext.js';
 
 function AdminPanel() {
     const { user } = useContext(AuthContext);
