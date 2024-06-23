@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import App from './App';
-import { AuthContext } from './context/AuthContext';
-import { fetchStats, fetchItems } from './services/apiService';
+import { AuthContext } from './AuthContext';
+import { fetchStats, fetchItems } from './apiService';
 
 jest.mock('./services/apiService');
 
