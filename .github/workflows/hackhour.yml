@@ -1,0 +1,65 @@
+name: hour tracker workflow
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+        cache: 'npm'
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Run Linter
+      run: npm run lint
+
+    - name: Execute Tests
+      run: npm test
+
+    - name: Generate Test Coverage
+      run: npm run coverage
+
+    - name: Build React App
+      run: npm run build
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-artifacts
+        path: build/
+        retention-days: 5
+
+    - name: Mock Deployment
+      run: |
+        echo "Deploying to staging server..."
+      if: github.ref == 'refs/heads/main'
+
+    - name: Notify Deployment Success
+      uses: actions/github-script@v6
+      if: success()
+      with:
+        script: |
+          github.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.name,
+            body: '🚀 Deployment succeeded!'
+          })
+
+    - name: Cleanup Post Build
+      run: |
+        echo "Cleaning up temporary files..."
