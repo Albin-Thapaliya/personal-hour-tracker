@@ -1,28 +1,29 @@
 import axios from 'axios';
 
-const API_URL = https://personal-hour-tracker.vercel.app/;
+// Correct API URL
+const API_URL = 'https://personal-hour-tracker.vercel.app';
 
 const apiClient = axios.create({
     baseURL: API_URL,
     headers: {
-        'Content-Type': 'application/json'
-    }
+        'Content-Type': 'application/json',
+    },
 });
 
 apiClient.interceptors.request.use(
-    config => {
+    (config) => {
         const token = localStorage.getItem('token');
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`;
         }
         return config;
     },
-    error => Promise.reject(error)
+    (error) => Promise.reject(error)
 );
 
 apiClient.interceptors.response.use(
-    response => response,
-    error => {
+    (response) => response,
+    (error) => {
         if (error.response && error.response.status === 401) {
             localStorage.removeItem('token');
             window.location.reload();
@@ -37,6 +38,10 @@ export const login = async (username, password) => {
         localStorage.setItem('token', response.data.token);
         return response.data;
     } catch (error) {
+        if (!error.response) {
+            console.error('Network Error', error);
+            throw new Error('Network error: Please check your connection.');
+        }
         console.error('Failed to login', error);
         throw new Error('Login failed. Please check your credentials.');
     }
@@ -48,6 +53,10 @@ export const register = async (username, password) => {
         localStorage.setItem('token', response.data.token);
         return response.data;
     } catch (error) {
+        if (!error.response) {
+            console.error('Network Error', error);
+            throw new Error('Network error: Please check your connection.');
+        }
         console.error('Failed to register', error);
         throw new Error('Registration failed. Please try again.');
     }
@@ -62,6 +71,10 @@ export const fetchUserData = async () => {
         const response = await apiClient.get('/user');
         return response.data;
     } catch (error) {
+        if (!error.response) {
+            console.error('Network Error', error);
+            throw new Error('Network error: Please check your connection.');
+        }
         console.error('Failed to fetch user data', error);
         throw new Error('Failed to fetch user data. Please try again later.');
     }
