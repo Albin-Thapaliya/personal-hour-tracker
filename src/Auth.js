@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { login, register } from './authService';
+import { login, register } from './AuthService';
 import './Auth.css';
 
 function Auth({ onAuth }) {
