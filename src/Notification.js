@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import './Notification.css';
 
-function Notification({ message, type }) {
+function Notification({ message, type, setNotification }) {
     useEffect(() => {
         if (message) {
             const timer = setTimeout(() => {
@@ -12,7 +12,7 @@ function Notification({ message, type }) {
             // Cleanup timer
             return () => clearTimeout(timer);
         }
-    }, [message]);
+    }, [message, setNotification]);
 
     if (!message) return null;
 
@@ -25,7 +25,8 @@ function Notification({ message, type }) {
 
 Notification.propTypes = {
     message: PropTypes.string.isRequired,
-    type: PropTypes.oneOf(['success', 'error', 'warning', 'info']).isRequired
+    type: PropTypes.oneOf(['success', 'error', 'warning', 'info']).isRequired,
+    setNotification: PropTypes.func.isRequired
 };
 
 export default Notification;
